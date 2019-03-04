@@ -112,6 +112,7 @@ void sv_insert_middle(sv *temp,sv *new)
 class *insert_class(char *lop)
 {
     class *temp;
+    i=0;
     temp=first;
     while(temp)
     {
@@ -135,32 +136,31 @@ class *insert_class(char *lop)
         if(first==NULL) cls_insert_head(new);
         else
         {
-            while(temp)
+            if(strcmp(new->name_c,first->name_c)<0) cls_insert_head(new);   //So sanh voi phan tu dau tien
+            else
             {
-                if(strcmp(new->name_c,first->name_c)<0)      //So sanh voi phan tu dau tien
+                while(temp)
                 {
-                    cls_insert_head(new);
-                    break;
-                }
-                if(first->next_c==NULL)             //Neu danh sach lop chi co 1 phan tu
-                    if(strcmp(new->name_c,temp->name_c)>0)
+                    if(first->next_c==NULL)             //Neu danh sach lop chi co 1 phan tu
+                        if(strcmp(new->name_c,temp->name_c)>0)
+                        {
+                            cls_insert_last(new);
+                            break;
+                        }
+                    if(strcmp(new->name_c,temp->next_c->name_c)>0)
                     {
-                        cls_insert_last(new);
+                        temp=temp->next_c;
+                        if(temp->next_c==NULL)
+                        {
+                            cls_insert_last(new);
+                            break;
+                        }
+                    }
+                    if(strcmp(new->name_c,temp->next_c->name_c)<0)
+                    {
+                        cls_insert_middle(temp,new);
                         break;
                     }
-                if(strcmp(new->name_c,temp->next_c->name_c)>0)
-                {
-                    temp=temp->next_c;
-                    if(temp->next_c==NULL)
-                    {
-                        cls_insert_last(new);
-                        break;
-                    }
-                }
-                if(strcmp(new->name_c,temp->next_c->name_c)<0)
-                {
-                    cls_insert_middle(temp,new);
-                    break;
                 }
             }
         }
@@ -175,6 +175,7 @@ sv *insert_sv(class *lop,char maso[],char *ten,char gioitinh[])
     strcpy(new->num,maso);
     new->name=ten;
     strcpy(new->sex,gioitinh);
+    new->next=NULL;
     temp=lop->next_s;
     if(lop->next_s==NULL) sv_insert_head(lop,new);
     else
@@ -366,7 +367,7 @@ void list_free()
     }
 }
 
-void file_read(FILE *f,class *lop1,sv *sv1,char *p,char maso[],char ten[],char lop[],char gioitinh[])
+void file_read(FILE *f,class *lop1,char *p,char maso[],char ten[],char lop[],char gioitinh[])
 {
     float diem;
     while(1)
@@ -384,8 +385,7 @@ void file_read(FILE *f,class *lop1,sv *sv1,char *p,char maso[],char ten[],char l
             ten[strlen(ten)-1]='\0';
             p=(char *) malloc((strlen(ten)+1)*sizeof(char));
             strcpy(p,ten);
-            sv1=insert_sv(lop1,maso,p,gioitinh);
-            sv1->point=diem;
+            insert_sv(lop1,maso,p,gioitinh)->point=diem;
             if(fgetc(f)=='.')
             {
                 fseek(f,+1,SEEK_CUR);
@@ -422,11 +422,10 @@ int main()
 {
     int x;
     class *lop1;
-    sv *sv1;
     char *p,maso[9],ten[50],lop[15],gioitinh[4];
     FILE *f;
     f=fopen("student_list.txt","r");
-    if(f!=NULL) file_read(f,lop1,sv1,p,maso,ten,lop,gioitinh);      //Nap du lieu tu file vao danh sach moc noi
+    if(f!=NULL) file_read(f,lop1,p,maso,ten,lop,gioitinh);      //Nap du lieu tu file vao danh sach
     do
     {
         printf("\n");

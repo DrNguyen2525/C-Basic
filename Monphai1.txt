@@ -1,0 +1,3 @@
+ManhHo	  	400	350	300	100
+HacLong	  	600	300	50	125
+HuyetKiem	200	400	350	50

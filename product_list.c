@@ -144,7 +144,7 @@ void file_read()
 		while(1)
 		{
 			fscanf(f,"%d %d %d ",&s.num,&s.price,&s.amount);
-			if (feof(f)) break;
+			if(feof(f)) break;
 			fgets(s.name,30,f);
 			s.name[strlen(s.name)-1]='\0';
 			list_insert(s.num,s.price,s.amount,s.name);
